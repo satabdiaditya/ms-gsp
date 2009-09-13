@@ -56,9 +56,24 @@ public class MSGSP {
 		for(Integer itemID: M)
 			System.out.print(itemID+" ");
 		*/
-		HashSet<Integer> L= initPass(M);   // make the first over S
+		LinkedList<Integer> L= initPass(M);   // make the first over S
+		System.out.println("L is ");
+		System.out.println(L);
 		
 		FrequentSequence F1 = initPrune(L);	//obtain F1 from L
+		System.out.println("F1 is ");
+		for (Transaction t : F1.sequences) { 
+			for (ItemSet is : t.itemSets)
+				System.out.print(is.items);
+			System.out.println();
+		}
+		FrequentSequence C2= level2CandidateGen(L);
+		System.out.println("C2 is ");
+		for (Transaction t : C2.sequences) { 
+			for (ItemSet is : t.itemSets)
+				System.out.print(is.items);
+			System.out.println();
+		}
 	}
 	
 	/*
@@ -69,8 +84,8 @@ public class MSGSP {
 	 * to their MIS values
 	 * @return: the candidate list L for generating F1   
 	 */
-	public HashSet<Integer> initPass(LinkedList<Integer> M) {
-		HashSet<Integer> L=new HashSet<Integer>();
+	public LinkedList<Integer> initPass(LinkedList<Integer> M) {
+		LinkedList<Integer> L=new LinkedList<Integer>();
 		DataReader reader = new DataReader();
 		Iterator<Integer> it = MS.keySet().iterator();	//get the iterator of MS's key set
 		while(it.hasNext()) {	//use the iterator to initialize sup, each item's support count is initially set to 0
@@ -113,7 +128,7 @@ public class MSGSP {
 	 * @Param: L, the set of items' id obtained from init-pass
 	 * @return: Frequent 1-sequences
 	 */
-	public FrequentSequence initPrune(HashSet<Integer> L) {
+	public FrequentSequence initPrune(LinkedList<Integer> L) {
 		FrequentSequence F1 = new FrequentSequence();
 		Iterator<Integer> it = L.iterator();	//get the iterator
 		while (it.hasNext()) {	//iterate all the items in L to find those who meets their own MIS
@@ -128,6 +143,47 @@ public class MSGSP {
 		}
 		return F1;
 	}
+	
+	/*
+	 * @Func: generate the 2-sequences candidate sequential pattern
+	 * @Param: L, the set of items' id obtained from init-pass
+	 * @return: 2-sequences candidate sequential pattern
+	 */
+	public FrequentSequence level2CandidateGen(LinkedList<Integer> L) {
+		FrequentSequence C2 = new FrequentSequence();
+		//find the item who meets its MIS, then compare the following items with this item's MIS
+		for (int i=0; i < L.size(); i++) {	
+			if (SUP.get(L.get(i))*1.0/N < MS.get(L.get(i)).floatValue())
+				continue;
+			else {
+				for (int j=i+1; j < L.size(); j++) {
+					if (SUP.get(L.get(j))*1.0/N >= MS.get(L.get(i)).floatValue()) {
+						/*
+						 * to add the transaction containing two item a and b into the 
+						 * frequent sequence, we need to add two sequences <{a}, {b}> and 
+						 * <{a, b}>
+						 */
+						ItemSet is = new ItemSet();
+						is.items.add(L.get(i));
+						is.items.add(L.get(j));
+						Transaction tran = new Transaction();
+						tran.itemSets.add(is);
+						C2.addTransaction(tran);	//tran is <{a, b}>
+						ItemSet is1 = new ItemSet();
+						is1.items.add(L.get(i));
+						ItemSet is2 = new ItemSet();
+						is2.items.add(L.get(j));
+						Transaction tran2 = new Transaction();
+						tran2.itemSets.add(is1);
+						tran2.itemSets.add(is2);
+						C2.addTransaction(tran2);	//tran2 is <{a}, {b}>
+					}
+				}
+			}
+		}
+		return C2;
+	}
+	
 	/*
 	 * @Func: Sort the items in ascending order according to their MIS values stored in MS
 	 * @Param: HashMap MS contains all pairs of itemID and its corresponding minimum support
