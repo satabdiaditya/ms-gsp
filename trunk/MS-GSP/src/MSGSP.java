@@ -20,7 +20,7 @@ public class MSGSP {
 	/*
 	 * SUP stores the support count for each item using a HashMap
 	 */
-	private HashMap<Integer, Integer> SUP;
+	private HashMap<Integer, Integer> SUP = new HashMap<Integer, Integer>();
 	/*
 	 * @Func: Constructor for MSGSP class
 	 * @Param: data file name and MIS file name
