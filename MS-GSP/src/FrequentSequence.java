@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /*
@@ -6,9 +7,9 @@ import java.util.HashSet;
  * to represent all of them. 
  */
 public class FrequentSequence {
-	public HashSet<Transaction> sequences;
+	public ArrayList<Transaction> sequences;
 	FrequentSequence(){
-		sequences=new HashSet<Transaction>();
+		sequences=new ArrayList<Transaction>();
 	}
 	
 	public void addTransaction(Transaction tran) {
