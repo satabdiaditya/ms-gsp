@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 
 /*
  * This is the class used to abstract transaction.
@@ -16,11 +14,10 @@ public class Transaction {
 	 * This function returns all the items contained in this transaction as a set
 	 * so there will be no duplicate among the items
 	 */
-	public HashSet<Integer> getItems() {
-		HashSet<Integer> result = new HashSet<Integer>();
-		Iterator<ItemSet> it = itemSets.iterator();
-		while (it.hasNext()) {
-			result.addAll(it.next().items);
+	public ArrayList<Integer> getItems() {
+		ArrayList<Integer> result = new ArrayList<Integer>();
+		for (ItemSet i : itemSets) {
+			result.addAll(i.items);
 		}
 		return result;
 	}
