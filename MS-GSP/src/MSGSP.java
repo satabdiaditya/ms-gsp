@@ -1,13 +1,12 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 
 public class MSGSP {
 	// Each element in MS is a pair of itemID and its corresponding minimum support
-	private HashMap<Integer,Float> MS;  
+	public static HashMap<Integer,Float> MS;  
 	/*
 	 * S is the an array of transactions which is abstracted as Transaction class.  
 	 * Each transaction is an array of itemsets which is abstracted as ItemSet class.  
@@ -16,11 +15,11 @@ public class MSGSP {
 	/*
 	 * N is the number of transactions in S
 	 */
-	private int N;
+	public static int N;
 	/*
 	 * SUP stores the support count for each item using a HashMap
 	 */
-	private HashMap<Integer, Integer> SUP = new HashMap<Integer, Integer>();
+	public static HashMap<Integer, Integer> SUP = new HashMap<Integer, Integer>();
 	/*
 	 * @Func: Constructor for MSGSP class
 	 * @Param: data file name and MIS file name
@@ -67,7 +66,8 @@ public class MSGSP {
 				System.out.print(is.items);
 			System.out.println();
 		}
-		FrequentSequence C2= level2CandidateGen(L);
+		MSCandidateGen gen = new MSCandidateGen();
+		FrequentSequence C2= gen.level2CandidateGen(L);
 		System.out.println("C2 is ");
 		for (Transaction t : C2.sequences) { 
 			for (ItemSet is : t.itemSets)
@@ -88,26 +88,22 @@ public class MSGSP {
 		LinkedList<Integer> L=new LinkedList<Integer>();
 		DataReader reader = new DataReader();
 		Iterator<Integer> it = MS.keySet().iterator();	//get the iterator of MS's key set
-		while(it.hasNext()) {	//use the iterator to initialize sup, each item's support count is initially set to 0
-			SUP.put(it.next(), new Integer(0));
+		for (Integer i : MS.keySet()) {	//initialize SUP, set each item's support count to 0
+			SUP.put(i, new Integer(0));
 		}
 		Transaction tran = reader.readNextTran();	//read transactions from database
 		while (tran != null) {
 			N++;
-			HashSet<Integer> items = tran.getItems();	//get all the items contained in current transaction
-			it = items.iterator();
-			while (it.hasNext()) {	//add 1 to the support count for each item
-				Integer id = it.next();
+			ArrayList<Integer> items = tran.getItems();	//get all the items contained in current transaction
+			for (Integer id : items) {	//add 1 to the support count for each item
 				Integer count = SUP.get(id);
-				SUP.remove(id);
 				SUP.put(id, new Integer(count.intValue() + 1));
 			}
 			tran = reader.readNextTran();
 		}
-		it = M.iterator();	//get the iterator on M to iterate each item on an ascending order according to their MIS
+
 		Integer minId = null;	//used to store the id of the first item who meets its MIS
-		while (it.hasNext()) {	//find the first item who meets its MIS
-			Integer itemId = it.next(); 
+		for (Integer itemId : M) {	//find the first item who meets its MIS
 			if (SUP.get(itemId)*1.0/N >= MS.get(itemId).floatValue()) {
 				minId = itemId;
 				L.add(itemId);
@@ -130,9 +126,7 @@ public class MSGSP {
 	 */
 	public FrequentSequence initPrune(LinkedList<Integer> L) {
 		FrequentSequence F1 = new FrequentSequence();
-		Iterator<Integer> it = L.iterator();	//get the iterator
-		while (it.hasNext()) {	//iterate all the items in L to find those who meets their own MIS
-			Integer itemId = it.next();
+		for (Integer itemId : L) {	//iterate all the items in L to find those who meets their own MIS
 			if (SUP.get(itemId)*1.0/N >= MS.get(itemId).floatValue()) {	//Create a 1-sequence, and add it to F1
 				ItemSet is = new ItemSet();
 				is.items.add(itemId);
@@ -142,48 +136,6 @@ public class MSGSP {
 			}
 		}
 		return F1;
-	}
-	
-	/*
-	 * @Func: generate the 2-sequences candidate sequential pattern
-	 * @Param: L, the set of items' id obtained from init-pass
-	 * @return: 2-sequences candidate sequential pattern
-	 */
-	public FrequentSequence level2CandidateGen(LinkedList<Integer> L) {
-		FrequentSequence C2 = new FrequentSequence();
-		//find the item who meets its MIS, then compare the following items with this item's MIS
-		for (int i=0; i < L.size(); i++) {	
-			if (SUP.get(L.get(i))*1.0/N < MS.get(L.get(i)).floatValue())
-				continue;
-			else {
-				for (int j=i+1; j < L.size(); j++) {
-					if (SUP.get(L.get(j))*1.0/N >= MS.get(L.get(i)).floatValue()) {
-						/*
-						 * to add the transaction containing two item a and b into the 
-						 * frequent sequence, we need to add two sequences <{a}, {b}> and 
-						 * <{a, b}>
-						 */
-						ItemSet is = new ItemSet();
-						is.items.add(L.get(i));
-						is.items.add(L.get(j));
-						Transaction tran = new Transaction();
-						tran.itemSets.add(is);
-						//TODO deal with the sdc
-						C2.addTransaction(tran);	//tran is <{a, b}>
-						ItemSet is1 = new ItemSet();
-						is1.items.add(L.get(i));
-						ItemSet is2 = new ItemSet();
-						is2.items.add(L.get(j));
-						Transaction tran2 = new Transaction();
-						tran2.itemSets.add(is1);
-						tran2.itemSets.add(is2);
-						//TODO deal with the sdc
-						C2.addTransaction(tran2);	//tran2 is <{a}, {b}>
-					}
-				}
-			}
-		}
-		return C2;
 	}
 	
 	/*

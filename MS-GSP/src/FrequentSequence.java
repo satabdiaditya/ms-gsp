@@ -14,4 +14,8 @@ public class FrequentSequence {
 	public void addTransaction(Transaction tran) {
 		sequences.add(tran);
 	}
+	
+	public void addFrequentSequence(FrequentSequence fs) {
+		sequences.addAll(fs.sequences);
+	}
 }
