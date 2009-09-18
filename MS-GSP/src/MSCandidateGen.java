@@ -93,10 +93,12 @@ public class MSCandidateGen {
 	 */
 	private FrequentSequence joinSequences(Transaction tran, FrequentSequence fs, int i) {
 		FrequentSequence result = new FrequentSequence();
+		//TODO
 		return result;
 	}
 	
 	private FrequentSequence prune(FrequentSequence fs) {
+		//TODO
 		return fs;
 	}
 }
