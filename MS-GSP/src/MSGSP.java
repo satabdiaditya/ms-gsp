@@ -17,6 +17,10 @@ public class MSGSP {
 	 */
 	public static int N;
 	/*
+	 * SDC is support distance constraint
+	 */
+	public static double SDC;
+	/*
 	 * SUP stores the support count for each item using a HashMap
 	 */
 	public static HashMap<Integer, Integer> SUP = new HashMap<Integer, Integer>();

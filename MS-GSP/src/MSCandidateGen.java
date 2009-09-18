@@ -36,22 +36,23 @@ public class MSCandidateGen {
 						 */
 						//TODO There maybe some problem with the following codes
 						//Whether the order within a sequence has been maintained??
-						ItemSet is = new ItemSet();
-						is.items.add(L.get(i));
-						is.items.add(L.get(j));
-						Transaction tran = new Transaction();
-						tran.itemSets.add(is);
-						//TODO deal with the sdc
-						C2.addTransaction(tran);	//tran is <{a, b}>
-						ItemSet is1 = new ItemSet();
-						is1.items.add(L.get(i));
-						ItemSet is2 = new ItemSet();
-						is2.items.add(L.get(j));
-						Transaction tran2 = new Transaction();
-						tran2.itemSets.add(is1);
-						tran2.itemSets.add(is2);
-						//TODO deal with the sdc
-						C2.addTransaction(tran2);	//tran2 is <{a}, {b}>
+						if (Math.abs(MSGSP.MS.get(i).doubleValue() - MSGSP.MS.get(j).doubleValue()) <= MSGSP.SDC);
+						{
+							ItemSet is = new ItemSet();
+							is.items.add(L.get(i));
+							is.items.add(L.get(j));
+							Transaction tran = new Transaction();
+							tran.itemSets.add(is);					
+							C2.addTransaction(tran);	//tran is <{a, b}>
+							ItemSet is1 = new ItemSet();
+							is1.items.add(L.get(i));
+							ItemSet is2 = new ItemSet();
+							is2.items.add(L.get(j));
+							Transaction tran2 = new Transaction();
+							tran2.itemSets.add(is1);
+							tran2.itemSets.add(is2);
+							C2.addTransaction(tran2);	//tran2 is <{a}, {b}>
+						}
 					}
 				}
 			}
