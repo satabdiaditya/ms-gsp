@@ -11,6 +11,10 @@ public class FrequentSequence {
 		sequences=new HashSet<Transaction>();
 	}
 	
+	FrequentSequence(HashSet<Transaction> sequence) {
+		sequences.addAll(sequence);
+	}
+	
 	public void addTransaction(Transaction tran) {
 		sequences.add(tran);
 	}
