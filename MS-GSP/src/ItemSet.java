@@ -5,7 +5,12 @@ import java.util.ArrayList;
  * Every itemset will contains several items indicated by their itemIDs.
  */
 public class ItemSet {
+	/*
+	 * Need to use ArrayList instead of HashSet
+	 * Order of items need to be maintained during MSCandidate-Gen
+	 */
 	public ArrayList<Integer> items;
+	
 	ItemSet(){
 		items=new ArrayList<Integer>();
 	}
