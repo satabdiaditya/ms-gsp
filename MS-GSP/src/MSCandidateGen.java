@@ -95,7 +95,6 @@ public class MSCandidateGen {
 	 */
 	private FrequentSequence findPair(FrequentSequence F, Transaction tran, int i) {
 		FrequentSequence pair = new FrequentSequence(F.sequences);
-		pair.sequences.remove(tran);
 		switch (i) {
 		case 0:
 			for (Transaction tr : pair.sequences) {
@@ -146,7 +145,7 @@ public class MSCandidateGen {
 						result.addTransaction(candidate);
 					}
 				}
-				else if ((tran.itemSets.size()==1 && tran.getItems().size()==2 && MSGSP.MS.get(tran.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem())) || tran.getItems().size() > 2) {
+				else if (tran.getItems().size() > 2 ||(tran.itemSets.size()==1 && tran.getItems().size()==2 && MSGSP.MS.get(tran.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()))) {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(tran.itemSets);
 					candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.getLastItem());
@@ -170,7 +169,7 @@ public class MSCandidateGen {
 					*/
 				}
 				/*
-				else if ((tran.itemSets.size()==1 && tran.getItems().size()==2 && MSGSP.MS.get(tran.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem())) || tran.getItems().size() > 2) {
+				else if (tran.getItems().size() > 2 || (tran.itemSets.size()==1 && tran.getItems().size()==2 && MSGSP.MS.get(tran.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()))) {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(tran.itemSets);
 					candidate.itemSets.get(0).items.add(0, tr.getFirstItem());
