@@ -197,6 +197,9 @@ public class MSCandidateGen {
 		return result;
 	}
 	
+	/*
+	 * The prune step in MScandidate-gen-SPM function
+	 */
 	private FrequentSequence prune(FrequentSequence fs) {
 		//TODO
 		return fs;

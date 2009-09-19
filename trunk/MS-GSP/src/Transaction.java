@@ -36,6 +36,12 @@ public class Transaction {
 		return items.get(items.size()-1);
 	}
 	
+	/*
+	 * test whether the item with id of itemId has the lowest MIS in current
+	 * transaction.
+	 * When flag=0, itemId is the first item,
+	 * flag =1, itemId is the last item.
+	 */
 	public boolean isSmallest(Integer itemId, int flag) {
 		boolean result = true;
 		ArrayList<Integer> items = this.getItems();
@@ -52,6 +58,11 @@ public class Transaction {
 		return result;
 	}
 	
+	/*
+	 * This method takes out the index1th item of current transaction object
+	 * and the index2th item of tran, and compares the rests to test whether
+	 * they are the same.
+	 */
 	public boolean specialEqualTo(Transaction tran, int index1, int index2) {
 		boolean result = false;
 		ArrayList<Integer> items1 = this.getItems();
@@ -62,34 +73,5 @@ public class Transaction {
 			result = true;
 		return result;
 	}
-	
-	public static void main(String args[]) {
-		Transaction tran1 = new Transaction();
-		ItemSet is1 = new ItemSet();
-		is1.items.add(new Integer(10));
-		is1.items.add(new Integer(12312));
-		is1.items.add(new Integer(80));
-		tran1.itemSets.add(is1);
-		ItemSet is2 = new ItemSet();
-		is2.items.add(new Integer(70));
-		tran1.itemSets.add(is2);
-		ItemSet is3 = new ItemSet();
-		is3.items.add(new Integer(50));
-		is3.items.add(new Integer(90));
-		tran1.itemSets.add(is3);
-		Transaction tran2 = new Transaction();
-		ItemSet is12 = new ItemSet();
-		is12.items.add(new Integer(10));
-		is12.items.add(new Integer(80));
-		is12.items.add(new Integer(70));
-		tran2.itemSets.add(is12);
-		ItemSet is22 = new ItemSet();
-		is22.items.add(new Integer(50));
-		tran2.itemSets.add(is22);
-		ItemSet is32 = new ItemSet();
-		is32.items.add(new Integer(90));
-		is32.items.add(new Integer(132));
-		tran2.itemSets.add(is32);
-		System.out.println(tran1.specialEqualTo(tran2, 1, 5));
-	}
+
 }
