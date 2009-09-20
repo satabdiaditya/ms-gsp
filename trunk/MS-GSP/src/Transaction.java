@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
-
 /*
  * This is the class used to abstract transaction.
  * Every transaction will contains a list of itemsets.
@@ -64,26 +62,87 @@ public class Transaction {
 	
 	/*
 	 * This method takes out the index1th item of current transaction object
-	 * and the index2th item of tran, and compares the rests to test whether
-	 * they are the same.
+	 * and the index2th item of tran, and compares the generated subsequences 
+	 * to test whether they are the same.
 	 */
 	public boolean specialEqualTo(Transaction tran, int index1, int index2) {
 		boolean result = false;
-		ArrayList<Integer> items1 = this.getItems();
-		items1.remove(index1);
-		ArrayList<Integer> items2 = tran.getItems();
-		items2.remove(index2);
-		if (items1.containsAll(items2) && items1.size() == items2.size())
+		int s1 = this.itemSets.size();
+		int s2 = tran.itemSets.size();
+		int l1 = this.getItems().size();
+		int l2 = tran.getItems().size();
+		Transaction current = new Transaction();
+		Transaction compare = new Transaction();
+		current = this.copy();
+		compare = tran.copy();
+		int i=0, j=0, index;
+		for (index=0; index<s1; index++) {
+			ItemSet is = current.itemSets.get(index);
+			j = i;
+			i += is.items.size();
+			if (i > index1)
+				break;
+		}
+		current.itemSets.get(index).items.remove(index1 - j);
+		if (current.itemSets.get(index).items.size() == 0)
+			current.itemSets.remove(index);
+		i = 0;
+		j = 0;
+		for (index=0; index<s2; index++) {
+			ItemSet is = compare.itemSets.get(index);
+			j = i;
+			i += is.items.size();
+			if (i > index2)
+				break;
+		}
+		compare.itemSets.get(index).items.remove(index2 - j);
+		if (compare.itemSets.get(index).items.size() == 0)
+			compare.itemSets.remove(index);
+		if (current.containedIn(compare) && s1 == s2 && l1 == l2)
 			result = true;
 		return result;
+	}
+	
+	private Transaction copy() {
+		Transaction tran = new Transaction();
+		for (int i=0; i<this.itemSets.size(); i++) {
+			ItemSet is = new ItemSet();
+			is.items.addAll(this.itemSets.get(i).items);
+			tran.itemSets.add(is);
+		}
+		return tran;
 	}
 	
 	/*
 	 * This method is used to check if this transaction is contained in the transaction indicated by an para.
 	 */
 	public boolean containedIn(Transaction tran){
-		
-		return false;
+		boolean result = true;
+		int m = this.itemSets.size();
+		int n = tran.itemSets.size();
+		int i=0, j=0;
+		for(i=0; i<m; i++) {
+			ItemSet is = this.itemSets.get(i);
+			do {
+				if (m-i > n-j) {	//The number of rest elements in current sequence
+									//is greater than the number of rest elements in tran
+					result = false;
+					break;
+				}
+				if (is.isSubset(tran.itemSets.get(j))) {	//find an element in tran which is the super set of current element in current sequence
+					j++;
+					break;
+				}
+				j++;
+			} while(j<n);
+			if (result == false) {
+				break;
+			}
+			if (i==m-1 && j==n) {
+				result = is.isSubset(tran.itemSets.get(j-1));
+			}
+		}
+		return result;
 	}
     
 	/*
@@ -121,4 +180,5 @@ public class Transaction {
 		System.out.println(" >");
 			
 	}
+	
 }
