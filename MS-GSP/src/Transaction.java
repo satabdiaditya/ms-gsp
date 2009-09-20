@@ -1,13 +1,17 @@
 import java.util.ArrayList;
 
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+
 /*
  * This is the class used to abstract transaction.
  * Every transaction will contains a list of itemsets.
  */
 public class Transaction {
 	public ArrayList<ItemSet> itemSets;
+	public int count;  // count the occurrence of the transaction
 	Transaction(){
 		itemSets=new ArrayList<ItemSet>();
+		count=0;
 	}
 	
 	/*
@@ -73,5 +77,48 @@ public class Transaction {
 			result = true;
 		return result;
 	}
-
+	
+	/*
+	 * This method is used to check if this transaction is contained in the transaction indicated by an para.
+	 */
+	public boolean containedIn(Transaction tran){
+		
+		return false;
+	}
+    
+	/*
+	 * This method is used to return the MIS of the item that has the lowest MIS value in the transaction
+	 */
+	public Float minMIS(){
+		ArrayList<Integer> items = this.getItems();
+	    Float ret=MSGSP.MS.get(items.get(0));
+	    float mis;
+	    for(int i=1;i<items.size();i++){
+	    	if((mis=MSGSP.MS.get(items.get(i)))<ret)
+	    		ret=mis;
+	    }
+	    return ret;
+	        	
+		
+	}
+	
+	
+	
+	
+	/*
+	 *  This method is used to print a transaction in a line
+	 */
+	public void print(){
+		int i;
+		System.out.print("< ");
+		for(ItemSet is: itemSets){
+			System.out.print("{");
+			for(i=0;i<is.items.size()-1;i++){  // print an element except the last item
+				System.out.print(is.items.get(i)+",");
+			}
+			System.out.print(is.items.get(i)+"}"); //print the last item in an element
+		}
+		System.out.println(" >");
+			
+	}
 }

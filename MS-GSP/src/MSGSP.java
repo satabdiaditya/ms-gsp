@@ -11,7 +11,7 @@ public class MSGSP {
 	 * S is the an array of transactions which is abstracted as Transaction class.  
 	 * Each transaction is an array of itemsets which is abstracted as ItemSet class.  
 	 */
-	private ArrayList<Transaction> S; 
+	public ArrayList<Transaction> S; 
 	/*
 	 * N is the number of transactions in S
 	 */
@@ -63,21 +63,58 @@ public class MSGSP {
 		System.out.println("L is ");
 		System.out.println(L);
 		
-		FrequentSequence F1 = initPrune(L);	//obtain F1 from L
+		ArrayList<FrequentSequence> F=new ArrayList<FrequentSequence>(); //F1 U F2 U F3....U Fk 
+	    // In order to make the index here synchronized with that in the book(start from 1), let F0 be a empty FrequentSequence  
+		F.add(new FrequentSequence()); 
+		
+		
+		F.add(initPrune(L));	//obtain F1 from L
 		System.out.println("F1 is ");
-		for (Transaction t : F1.sequences) { 
+		for (Transaction t : F.get(1).sequences) { 
 			for (ItemSet is : t.itemSets)
 				System.out.print(is.items);
 			System.out.println();
 		}
-		MSCandidateGen gen = new MSCandidateGen();
-		FrequentSequence C2= gen.level2CandidateGen(L);
-		System.out.println("C2 is ");
-		for (Transaction t : C2.sequences) { 
-			for (ItemSet is : t.itemSets)
-				System.out.print(is.items);
-			System.out.println();
+		
+		MSCandidateGen gen = new MSCandidateGen(); // Define a new instance of MSCandidateGen class
+		FrequentSequence Fk_1;
+		for(int k=2; !(Fk_1=F.get(k-1)).sequences.isEmpty(); k++){
+			FrequentSequence Ck;
+			if(k==2){
+				Ck= gen.level2CandidateGen(L);   
+				System.out.println("C" +k+" is ");
+				for (Transaction t : Ck.sequences) { 
+					for (ItemSet is : t.itemSets)
+						System.out.print(is.items);
+					System.out.println();
+				}
+			}
+			else
+				Ck=gen.candidateGen(Fk_1);
+				
+		    for(Transaction s: S)
+		    	for(Transaction c: Ck.sequences){
+		    		if( c.containedIn(s))
+		    			c.count++;
+		    	}
+		    
+		    FrequentSequence Fk=new FrequentSequence();
+		    for(Transaction c: Ck.sequences)
+		    	if(c.count*1.0/S.size()>=c.minMIS())
+		    		Fk.sequences.add(c);
 		}
+		
+		
+		// Print F
+		int k=0;
+		while(++k<F.size()){
+			FrequentSequence Fk=F.get(k);
+			System.out.println("***************K="+k+"********************");
+			for(Transaction tran: Fk.sequences) 
+				tran.print();
+		}
+
+		
 	}
 	
 	/*
