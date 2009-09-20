@@ -11,7 +11,14 @@ public class ItemSet {
 	 */
 	public ArrayList<Integer> items;
 	
-	ItemSet(){
+	public ItemSet(){
 		items=new ArrayList<Integer>();
+	}
+	
+	/*
+	 * Test whether current itemset is a subset of the itemSet given as the para
+	 */
+	public boolean isSubset(ItemSet itemSet) {
+		return itemSet.items.containsAll(this.items);
 	}
 }
