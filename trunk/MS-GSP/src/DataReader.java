@@ -23,6 +23,7 @@ public class DataReader {
 				is3.items.add(new Integer(50));
 				is3.items.add(new Integer(70));
 				tran.itemSets.add(is3);
+				break;
 			case 1:
 				ItemSet is4 = new ItemSet();
 				is4.items.add(new Integer(20));
@@ -33,6 +34,7 @@ public class DataReader {
 				is5.items.add(new Integer(70));
 				is5.items.add(new Integer(80));
 				tran.itemSets.add(is5);
+				break;
 			case 2:
 				ItemSet is6 = new ItemSet();
 				is6.items.add(new Integer(20));
@@ -46,6 +48,7 @@ public class DataReader {
 				is8.items.add(new Integer(70));
 				is8.items.add(new Integer(20));
 				tran.itemSets.add(is8);
+				break;
 			case 3:
 				ItemSet is9 = new ItemSet();
 				is9.items.add(new Integer(10));
@@ -54,6 +57,7 @@ public class DataReader {
 				ItemSet is10 = new ItemSet();
 				is10.items.add(new Integer(40));
 				tran.itemSets.add(is10);
+				break;
 			case 4:
 				ItemSet is11 = new ItemSet();
 				is11.items.add(new Integer(10));
@@ -64,6 +68,7 @@ public class DataReader {
 				is12.items.add(new Integer(40));
 				is12.items.add(new Integer(90));
 				tran.itemSets.add(is12);
+				break;
 			case 5:
 				ItemSet is13 = new ItemSet();
 				is13.items.add(new Integer(10));
@@ -74,6 +79,7 @@ public class DataReader {
 				is14.items.add(new Integer(40));
 				is14.items.add(new Integer(90));
 				tran.itemSets.add(is14);
+				break;
 			}
 			DataReader.i++;
 		}
