@@ -103,6 +103,7 @@ public class MSCandidateGen {
 				else
 					pair.sequences.remove(tr);
 			}
+			break;
 		case 1:
 			for (Transaction tr : pair.sequences) {
 				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-2) &&
@@ -110,12 +111,14 @@ public class MSCandidateGen {
 				else
 					pair.sequences.remove(tr);
 			}
+			break;
 		case 2:
 			for (Transaction tr : pair.sequences) {
 				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-1));
 				else
 					pair.sequences.remove(tr);
 			}
+			break;
 		}
 		return pair;
 	}
@@ -152,6 +155,7 @@ public class MSCandidateGen {
 					result.addTransaction(candidate);
 				}
 			}
+			break;
 		case 1:
 			for (Transaction tr : pair.sequences) {
 				if (tr.itemSets.get(0).items.size() == 1) {
@@ -177,6 +181,7 @@ public class MSCandidateGen {
 				//What is the judegement in the else if statement???
 				*/
 			}
+			break;
 		case 2:
 			for (Transaction tr : pair.sequences) {
 				if (tr.itemSets.get(tr.itemSets.size()-1).items.size() == 1) {
@@ -192,6 +197,7 @@ public class MSCandidateGen {
 					result.addTransaction(candidate);
 				}
 			}
+			break;
 		}
 		return result;
 	}
