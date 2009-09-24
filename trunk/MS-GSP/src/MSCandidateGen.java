@@ -36,7 +36,7 @@ public class MSCandidateGen {
 						 */
 						//TODO There maybe some problem with the following codes
 						//Whether the order within a sequence has been maintained??
-						if (Math.abs(MSGSP.MS.get(i).doubleValue() - MSGSP.MS.get(j).doubleValue()) <= MSGSP.SDC);
+						if (Math.abs(MSGSP.MS.get(L.get(i)).doubleValue() - MSGSP.MS.get(L.get(j)).doubleValue()) <= MSGSP.SDC);
 						{
 							ItemSet is = new ItemSet();
 							is.items.add(L.get(i));
@@ -99,7 +99,8 @@ public class MSCandidateGen {
 		case 0:
 			for (Transaction tr : pair.sequences) {
 				if (tran.specialEqualTo(tr, 1, tr.getItems().size()-1) &&
-						MSGSP.MS.get(tran.getFirstItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()).doubleValue());
+						MSGSP.MS.get(tran.getFirstItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
+						Math.abs(MSGSP.MS.get(tran.getItems().get(1)).doubleValue() - MSGSP.MS.get(tr.getLastItem()).doubleValue()) <= MSGSP.SDC);
 				else
 					pair.sequences.remove(tr);
 			}
@@ -107,14 +108,16 @@ public class MSCandidateGen {
 		case 1:
 			for (Transaction tr : pair.sequences) {
 				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-2) &&
-						MSGSP.MS.get(tran.getFirstItem()).doubleValue() > MSGSP.MS.get(tr.getLastItem()).doubleValue());
+						MSGSP.MS.get(tran.getFirstItem()).doubleValue() > MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
+						Math.abs(MSGSP.MS.get(tran.getFirstItem()).doubleValue() - MSGSP.MS.get(tr.getItems().get(tr.getItems().size()-2)).doubleValue()) <= MSGSP.SDC);
 				else
 					pair.sequences.remove(tr);
 			}
 			break;
 		case 2:
 			for (Transaction tr : pair.sequences) {
-				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-1));
+				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-1) &&
+						Math.abs(MSGSP.MS.get(tran.getFirstItem()).doubleValue() - MSGSP.MS.get(tr.getLastItem()).doubleValue()) <= MSGSP.SDC);
 				else
 					pair.sequences.remove(tr);
 			}
@@ -158,28 +161,24 @@ public class MSCandidateGen {
 			break;
 		case 1:
 			for (Transaction tr : pair.sequences) {
-				if (tr.itemSets.get(0).items.size() == 1) {
+				if (tr.reverse().itemSets.get(tr.reverse().itemSets.size()-1).items.size() == 1) {
 					candidate = new Transaction();
-					candidate.itemSets.add(tr.itemSets.get(0));
-					candidate.itemSets.addAll(tran.itemSets);
-					result.addTransaction(candidate);
-					/*
-					if (tran.itemSets.size()==2 && tran.getItems().size()==2 && MSGSP.MS.get(tran.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem())) {
+					candidate.itemSets.addAll(tran.reverse().itemSets);
+					candidate.itemSets.add(tr.reverse().itemSets.get(tr.reverse().itemSets.size()-1));
+					result.addTransaction(candidate.reverse());
+					if (tran.reverse().itemSets.size()==2 && tran.reverse().getItems().size()==2 && MSGSP.MS.get(tran.reverse().getLastItem()).doubleValue() < MSGSP.MS.get(tr.reverse().getLastItem())) {
 						candidate = new Transaction();
-						candidate.itemSets.addAll(tran.itemSets);
-						candidate.itemSets.get(0).items.add(0, tr.getFirstItem());
+						candidate.itemSets.addAll(tran.reverse().itemSets);
+						candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.reverse().getLastItem());
+						result.addTransaction(candidate.reverse());
 					}
-					//What is judgement in the if statement???
-					*/
 				}
-				/*
-				else if (tran.getItems().size() > 2 || (tran.itemSets.size()==1 && tran.getItems().size()==2 && MSGSP.MS.get(tran.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()))) {
+				else if (tran.reverse().getItems().size() > 2 ||(tran.reverse().itemSets.size()==1 && tran.reverse().getItems().size()==2 && MSGSP.MS.get(tran.reverse().getLastItem()).doubleValue() < MSGSP.MS.get(tr.reverse().getLastItem()))) {
 					candidate = new Transaction();
-					candidate.itemSets.addAll(tran.itemSets);
-					candidate.itemSets.get(0).items.add(0, tr.getFirstItem());
+					candidate.itemSets.addAll(tran.reverse().itemSets);
+					candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.reverse().getLastItem());
+					result.addTransaction(candidate.reverse());
 				}
-				//What is the judegement in the else if statement???
-				*/
 			}
 			break;
 		case 2:
