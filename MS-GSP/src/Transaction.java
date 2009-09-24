@@ -161,11 +161,28 @@ public class Transaction {
 		
 	}
 	
+	/*
+	 *  This method is used to create and return an transaction which is an 
+	 *  reverse of this transaction (also have to reverse the element/item set) 
+	 */
+	public Transaction reverse(){
+		Transaction rev=new Transaction();
+		ItemSet revIS=new ItemSet();
+		int i,j;
+		for(i=this.itemSets.size()-1;i>=0;i--){
+			ItemSet is=this.itemSets.get(i);
+			for(j=is.items.size()-1;j>=0;j--)
+				revIS.items.add(is.items.get(j));
+			rev.itemSets.add(revIS);
+			revIS.items.clear();
+		}
+		return rev;
+	}
 	
 	
 	
 	/*
-	 *  This method is used to print a transaction in a line
+	 * This method is used to print a transaction in a line
 	 */
 	public void print(){
 		int i;
