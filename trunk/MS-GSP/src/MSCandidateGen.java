@@ -12,7 +12,7 @@ public class MSCandidateGen {
 				C.addFrequentSequence(joinSequences(tran, pair, i));
 			}
 		}
-		return prune(C);
+		return prune(C,F); //F means F(k-1)?
 	}
 	
 	/*
@@ -204,8 +204,51 @@ public class MSCandidateGen {
 	/*
 	 * The prune step in MScandidate-gen-SPM function
 	 */
-	private FrequentSequence prune(FrequentSequence fs) {
+	private FrequentSequence prune(FrequentSequence fs, FrequentSequence fk_1) {
 		//TODO
-		return fs;
+		Integer minItem; // Item that has the minimum MIS in a sequence
+		FrequentSequence fsPruned=new FrequentSequence(); // Frequent sequence set after prune step
+		for(Transaction t: fs.sequences){
+			minItem=new Integer(t.minMISItem());
+			boolean frequent=true; // indicator of if t is frequent or not
+			for(int i=0;i<t.itemSets.size();i++){ // walk through the itemsets of a sequence
+				if(t.itemSets.get(i).items.contains(minItem)){ // if the itemset contains the item with min MIS
+					Transaction copy=t.copy();
+					for(int k=0;k<t.itemSets.size();k++){
+						if(!frequent) 
+							break;
+						for(Integer item: t.itemSets.get(k).items){
+							if(!(k==i&&item==minItem)){ //except the minItem
+								copy.itemSets.get(k).items.remove(item); // generate a k-1 subsequence 
+								if(!frequent(copy, fk_1)){//if this subsequence is not frequent, then the sequence is not frequent either.
+									frequent=false;
+									break;
+								}
+							}
+						}
+					}
+					if(!frequent)// if a sequence is already infrequent the no need to continue check the remaining itemsets
+						break;
+				}
+			}
+			if(frequent) //if this sequence is frequent, add to the result
+				fsPruned.sequences.add(t);
+		}
+		return fsPruned;
 	}
+	
+	
+	/*
+	 * This method is used to determine if a k-1 length subsequence is frequent
+	 */
+	private boolean frequent(Transaction t, FrequentSequence fk_1){
+		boolean	frequent=false; 
+		for(Transaction freq: fk_1.sequences)
+			if(t.containedIn(freq)){
+				frequent=true; //there is one sequence in F(k-1) includes the subsequence
+				break;
+			}
+		return frequent;
+	}
+	
 }

@@ -100,7 +100,7 @@ public class MSGSP {
 		    
 		    FrequentSequence Fk=new FrequentSequence();
 		    for(Transaction c: Ck.sequences)
-		    	if(c.count*1.0/S.size()>=c.minMIS())
+		    	if(c.count*1.0/S.size()>=MS.get(c.minMISItem()))
 		    		Fk.sequences.add(c);
 		}
 		
