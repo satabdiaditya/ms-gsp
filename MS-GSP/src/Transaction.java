@@ -103,7 +103,10 @@ public class Transaction {
 		return result;
 	}
 	
-	private Transaction copy() {
+	/*
+	 * This method is used to copy an transaction
+	 */
+	public Transaction copy() {
 		Transaction tran = new Transaction();
 		for (int i=0; i<this.itemSets.size(); i++) {
 			ItemSet is = new ItemSet();
@@ -146,17 +149,16 @@ public class Transaction {
 	}
     
 	/*
-	 * This method is used to return the MIS of the item that has the lowest MIS value in the transaction
+	 * This method is used to return the item that has the lowest MIS value in the transaction
 	 */
-	public Float minMIS(){
+	public int minMISItem(){
 		ArrayList<Integer> items = this.getItems();
-	    Float ret=MSGSP.MS.get(items.get(0));
-	    float mis;
+	    int item=0;
 	    for(int i=1;i<items.size();i++){
-	    	if((mis=MSGSP.MS.get(items.get(i)))<ret)
-	    		ret=mis;
+	    	if(MSGSP.MS.get(items.get(i))<MSGSP.MS.get(items.get(item)))
+	    		item=i;
 	    }
-	    return ret;
+	    return item;
 	        	
 		
 	}
@@ -178,8 +180,6 @@ public class Transaction {
 		}
 		return rev;
 	}
-	
-	
 	
 	/*
 	 * This method is used to print a transaction in a line
