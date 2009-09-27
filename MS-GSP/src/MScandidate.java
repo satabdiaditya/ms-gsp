@@ -538,8 +538,6 @@ System.out.println();
 Vector candidates = new Vector();
 if(todo.isEmpty()!=true){
 
-DataReader reader = new DataReader();
-
 int j=0;
 for(Transaction trans1:todo){
 for(ItemSet haha: todo.get(j++).itemSets){
