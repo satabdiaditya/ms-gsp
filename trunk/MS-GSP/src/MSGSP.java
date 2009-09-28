@@ -17,9 +17,13 @@ public class MSGSP {
 	 */
 	public static int N;
 	/*
+	 * Count of total item sets
+	 */
+	public static int itemN;
+	/*
 	 * SDC is support distance constraint
 	 */
-	public static double SDC;
+	public static double SDC = 0.1;
 	/*
 	 * SUP stores the support count for each item using a HashMap
 	 */
@@ -54,14 +58,12 @@ public class MSGSP {
 		*/
 		
 		LinkedList<Integer> M=sort(MS); // according to MIS(i)'s stored in MS
-		
+		System.out.println(MS.entrySet());
 		/* test if sort function works
 		for(Integer itemID: M)
 			System.out.print(itemID+" ");
 		*/
 		LinkedList<Integer> L= initPass(M);   // make the first over S
-		System.out.println("L is ");
-		System.out.println(L);
 		
 		ArrayList<FrequentSequence> F=new ArrayList<FrequentSequence>(); //F1 U F2 U F3....U Fk 
 	    // In order to make the index here synchronized with that in the book(start from 1), let F0 be a empty FrequentSequence  
@@ -79,16 +81,10 @@ public class MSGSP {
 		MSCandidateGen gen = new MSCandidateGen(); // Define a new instance of MSCandidateGen class
 		FrequentSequence Fk_1;
 		for(int k=2; !(Fk_1=F.get(k-1)).sequences.isEmpty(); k++){
+			System.out.println(k);
 			FrequentSequence Ck;
-			if(k==2){
-				Ck= gen.level2CandidateGen(L);   
-				System.out.println("C" +k+" is ");
-				for (Transaction t : Ck.sequences) { 
-					for (ItemSet is : t.itemSets)
-						System.out.print(is.items);
-					System.out.println();
-				}
-			}
+			if(k==2)
+				Ck= gen.level2CandidateGen(L); 
 			else
 				Ck=gen.candidateGen(Fk_1);
 				
@@ -99,9 +95,17 @@ public class MSGSP {
 		    	}
 		    
 		    FrequentSequence Fk=new FrequentSequence();
-		    for(Transaction c: Ck.sequences)
-		    	if(c.count*1.0/S.size()>=MS.get(c.minMISItem()))
+		    for(Transaction c: Ck.sequences) {
+		    	if(c.count*1.0/N>=MS.get(c.getItems().get(c.minMISItem())))
 		    		Fk.sequences.add(c);
+		    }
+		    F.add(Fk);
+		    System.out.println("F" +k+" is ");
+			for (Transaction t : Fk.sequences) { 
+				for (ItemSet is : t.itemSets)
+					System.out.print(is.items);
+				System.out.println();
+			}
 		}
 		
 		
@@ -127,24 +131,24 @@ public class MSGSP {
 	 */
 	public LinkedList<Integer> initPass(LinkedList<Integer> M) {
 		LinkedList<Integer> L=new LinkedList<Integer>();
-		DataReader reader = new DataReader();
-		Iterator<Integer> it = MS.keySet().iterator();	//get the iterator of MS's key set
+		Iterator<Integer> it = M.iterator();	//get the iterator of MS's key set
 		for (Integer i : MS.keySet()) {	//initialize SUP, set each item's support count to 0
 			SUP.put(i, new Integer(0));
 		}
-		Transaction tran = reader.readNextTran();	//read transactions from database
-		while (tran != null) {
+		
+		for (Transaction tran : S) {
 			N++;
+			itemN += tran.itemSets.size();
 			ArrayList<Integer> items = tran.getItems();	//get all the items contained in current transaction
 			for (Integer id : items) {	//add 1 to the support count for each item
 				Integer count = SUP.get(id);
 				SUP.put(id, new Integer(count.intValue() + 1));
 			}
-			tran = reader.readNextTran();
 		}
-
+		
 		Integer minId = null;	//used to store the id of the first item who meets its MIS
-		for (Integer itemId : M) {	//find the first item who meets its MIS
+		while (it.hasNext()) {	//find the first item who meets its MIS
+			Integer itemId = it.next();
 			if (SUP.get(itemId)*1.0/N >= MS.get(itemId).floatValue()) {
 				minId = itemId;
 				L.add(itemId);

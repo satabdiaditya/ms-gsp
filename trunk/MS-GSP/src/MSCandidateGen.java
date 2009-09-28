@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 
@@ -27,7 +28,7 @@ public class MSCandidateGen {
 			if (MSGSP.SUP.get(L.get(i))*1.0/MSGSP.N < MSGSP.MS.get(L.get(i)).floatValue())
 				continue;
 			else {
-				for (int j=i+1; j < L.size(); j++) {
+				for (int j=i; j < L.size(); j++) {
 					if (MSGSP.SUP.get(L.get(j))*1.0/MSGSP.N >= MSGSP.MS.get(L.get(i)).floatValue()) {
 						/*
 						 * to add the transaction containing two item a and b into the 
@@ -36,14 +37,16 @@ public class MSCandidateGen {
 						 */
 						//TODO There maybe some problem with the following codes
 						//Whether the order within a sequence has been maintained??
-						if (Math.abs(MSGSP.MS.get(L.get(i)).doubleValue() - MSGSP.MS.get(L.get(j)).doubleValue()) <= MSGSP.SDC);
+						if (Math.abs(MSGSP.SUP.get(L.get(i)).intValue() - MSGSP.SUP.get(L.get(j)).intValue()) <= MSGSP.SDC * MSGSP.itemN)
 						{
 							ItemSet is = new ItemSet();
 							is.items.add(L.get(i));
 							is.items.add(L.get(j));
-							Transaction tran = new Transaction();
-							tran.itemSets.add(is);					
-							C2.addTransaction(tran);	//tran is <{a, b}>
+							if (! L.get(i).equals(L.get(j))) {
+								Transaction tran = new Transaction();
+								tran.itemSets.add(is);					
+								C2.addTransaction(tran);	//tran is <{a, b}>
+							}
 							ItemSet is1 = new ItemSet();
 							is1.items.add(L.get(i));
 							ItemSet is2 = new ItemSet();
@@ -52,6 +55,16 @@ public class MSCandidateGen {
 							tran2.itemSets.add(is1);
 							tran2.itemSets.add(is2);
 							C2.addTransaction(tran2);	//tran2 is <{a}, {b}>
+							ItemSet is3 = new ItemSet();
+							is3.items.add(L.get(j));
+							ItemSet is4 = new ItemSet();
+							is4.items.add(L.get(i));
+							if (! L.get(i).equals(L.get(j))) {
+								Transaction tran3 = new Transaction();
+								tran3.itemSets.add(is3);
+								tran3.itemSets.add(is4);
+								C2.addTransaction(tran3);	//tran3 is <{b}, {a}>
+							}
 						}
 					}
 				}
@@ -97,29 +110,32 @@ public class MSCandidateGen {
 		FrequentSequence pair = new FrequentSequence(F.sequences);
 		switch (i) {
 		case 0:
-			for (Transaction tr : pair.sequences) {
+			for (Iterator<Transaction> it = pair.sequences.iterator(); it.hasNext();) {
+				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 1, tr.getItems().size()-1) &&
 						MSGSP.MS.get(tran.getFirstItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
 						Math.abs(MSGSP.MS.get(tran.getItems().get(1)).doubleValue() - MSGSP.MS.get(tr.getLastItem()).doubleValue()) <= MSGSP.SDC);
 				else
-					pair.sequences.remove(tr);
+					it.remove();
 			}
 			break;
 		case 1:
-			for (Transaction tr : pair.sequences) {
+			for (Iterator<Transaction> it = pair.sequences.iterator(); it.hasNext();) {
+				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-2) &&
 						MSGSP.MS.get(tran.getFirstItem()).doubleValue() > MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
 						Math.abs(MSGSP.MS.get(tran.getFirstItem()).doubleValue() - MSGSP.MS.get(tr.getItems().get(tr.getItems().size()-2)).doubleValue()) <= MSGSP.SDC);
 				else
-					pair.sequences.remove(tr);
+					it.remove();
 			}
 			break;
 		case 2:
-			for (Transaction tr : pair.sequences) {
+			for (Iterator<Transaction> it = pair.sequences.iterator(); it.hasNext();) {
+				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-1) &&
 						Math.abs(MSGSP.MS.get(tran.getFirstItem()).doubleValue() - MSGSP.MS.get(tr.getLastItem()).doubleValue()) <= MSGSP.SDC);
 				else
-					pair.sequences.remove(tr);
+					it.remove();
 			}
 			break;
 		}

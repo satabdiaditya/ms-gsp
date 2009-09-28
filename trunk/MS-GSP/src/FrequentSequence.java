@@ -6,7 +6,7 @@ import java.util.HashSet;
  * to represent all of them. 
  */
 public class FrequentSequence {
-	public HashSet<Transaction> sequences;
+	public HashSet<Transaction> sequences = new HashSet<Transaction>();
 	FrequentSequence(){
 		sequences=new HashSet<Transaction>();
 	}
