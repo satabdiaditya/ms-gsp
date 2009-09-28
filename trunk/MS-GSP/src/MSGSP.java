@@ -58,12 +58,11 @@ public class MSGSP {
 		*/
 		
 		LinkedList<Integer> M=sort(MS); // according to MIS(i)'s stored in MS
-		System.out.println(MS.entrySet());
 		/* test if sort function works
 		for(Integer itemID: M)
 			System.out.print(itemID+" ");
 		*/
-		LinkedList<Integer> L= initPass(M);   // make the first over S
+		ArrayList<Integer> L= initPass(M);   // make the first over S
 		
 		ArrayList<FrequentSequence> F=new ArrayList<FrequentSequence>(); //F1 U F2 U F3....U Fk 
 	    // In order to make the index here synchronized with that in the book(start from 1), let F0 be a empty FrequentSequence  
@@ -81,7 +80,6 @@ public class MSGSP {
 		MSCandidateGen gen = new MSCandidateGen(); // Define a new instance of MSCandidateGen class
 		FrequentSequence Fk_1;
 		for(int k=2; !(Fk_1=F.get(k-1)).sequences.isEmpty(); k++){
-			System.out.println(k);
 			FrequentSequence Ck;
 			if(k==2)
 				Ck= gen.level2CandidateGen(L); 
@@ -129,8 +127,8 @@ public class MSGSP {
 	 * to their MIS values
 	 * @return: the candidate list L for generating F1   
 	 */
-	public LinkedList<Integer> initPass(LinkedList<Integer> M) {
-		LinkedList<Integer> L=new LinkedList<Integer>();
+	public ArrayList<Integer> initPass(LinkedList<Integer> M) {
+		ArrayList<Integer> L=new ArrayList<Integer>();
 		Iterator<Integer> it = M.iterator();	//get the iterator of MS's key set
 		for (Integer i : MS.keySet()) {	//initialize SUP, set each item's support count to 0
 			SUP.put(i, new Integer(0));
@@ -169,7 +167,7 @@ public class MSGSP {
 	 * @Param: L, the set of items' id obtained from init-pass
 	 * @return: Frequent 1-sequences
 	 */
-	public FrequentSequence initPrune(LinkedList<Integer> L) {
+	public FrequentSequence initPrune(ArrayList<Integer> L) {
 		FrequentSequence F1 = new FrequentSequence();
 		for (Integer itemId : L) {	//iterate all the items in L to find those who meets their own MIS
 			if (SUP.get(itemId)*1.0/N >= MS.get(itemId).floatValue()) {	//Create a 1-sequence, and add it to F1
