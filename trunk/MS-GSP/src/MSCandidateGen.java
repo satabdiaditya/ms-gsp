@@ -8,8 +8,9 @@ public class MSCandidateGen {
 		ArrayList<FrequentSequence> ss = partition(F);
 		for (int i=0; i<=2; i++) {
 			for (Transaction tran : ss.get(i).sequences) {
-				FrequentSequence pair = findPair(F, tran, i);
-				C.addFrequentSequence(joinSequences(tran, pair, i));
+				Transaction tr = tran.copy();
+				FrequentSequence pair = findPair(F, tr, i);
+				C.addFrequentSequence(joinSequences(tr, pair, i));
 			}
 		}
 		return prune(C,F); //F means F(k-1)?
@@ -112,35 +113,32 @@ public class MSCandidateGen {
 	 * Parameter i indicates which of the three, s1, s2, and s3, does tran belong to. 
 	 */
 	private FrequentSequence findPair(FrequentSequence F, Transaction tran, int i) {
-		FrequentSequence pair = new FrequentSequence(F.sequences);
+		FrequentSequence pair = new FrequentSequence();
 		switch (i) {
 		case 0:
-			for (Iterator<Transaction> it = pair.sequences.iterator(); it.hasNext();) {
+			for (Iterator<Transaction> it = F.sequences.iterator(); it.hasNext();) {
 				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 1, tr.getItems().size()-1) &&
 						MSGSP.MS.get(tran.getFirstItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
-						Math.abs(MSGSP.SUP.get(tran.getItems().get(1)).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.itemN);
-				else
-					it.remove();
+						Math.abs(MSGSP.SUP.get(tran.getItems().get(1)).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.itemN)
+					pair.sequences.add(tr);
 			}
 			break;
 		case 1:
-			for (Iterator<Transaction> it = pair.sequences.iterator(); it.hasNext();) {
+			for (Iterator<Transaction> it = F.sequences.iterator(); it.hasNext();) {
 				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-2) &&
 						MSGSP.MS.get(tran.getFirstItem()).doubleValue() > MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
-						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getItems().get(tr.getItems().size()-2)).intValue()) <= MSGSP.SDC*MSGSP.itemN);
-				else
-					it.remove();
+						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getItems().get(tr.getItems().size()-2)).intValue()) <= MSGSP.SDC*MSGSP.itemN)
+					pair.sequences.add(tr);
 			}
 			break;
 		case 2:
-			for (Iterator<Transaction> it = pair.sequences.iterator(); it.hasNext();) {
+			for (Iterator<Transaction> it = F.sequences.iterator(); it.hasNext();) {
 				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-1) &&
-						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.itemN);
-				else
-					it.remove();
+						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.itemN)
+					pair.sequences.add(tr);
 			}
 			break;
 		}

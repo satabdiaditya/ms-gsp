@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /*
  * This is the class used to abstract transaction.
@@ -17,6 +18,14 @@ public class Transaction {
 	 */
 	public ArrayList<Integer> getItems() {
 		ArrayList<Integer> result = new ArrayList<Integer>();
+		for (ItemSet i : itemSets) {
+			result.addAll(i.items);
+		}
+		return result;
+	}
+	
+	public HashSet<Integer> getItemsAsSet() {
+		HashSet<Integer> result = new HashSet<Integer>();
 		for (ItemSet i : itemSets) {
 			result.addAll(i.items);
 		}
@@ -69,8 +78,6 @@ public class Transaction {
 		boolean result = false;
 		int s1 = this.itemSets.size();
 		int s2 = tran.itemSets.size();
-		int l1 = this.getItems().size();
-		int l2 = tran.getItems().size();
 		Transaction current = new Transaction();
 		Transaction compare = new Transaction();
 		current = this.copy();
@@ -98,7 +105,11 @@ public class Transaction {
 		compare.itemSets.get(index).items.remove(index2 - j);
 		if (compare.itemSets.get(index).items.size() == 0)
 			compare.itemSets.remove(index);
-		if (current.containedIn(compare) && s1 == s2 && l1 == l2)
+		int s12 = current.itemSets.size();
+		int s22 = compare.itemSets.size();
+		int l12 = current.getItems().size();
+		int l22 = compare.getItems().size();
+		if (current.containedIn(compare) && s12 == s22 && l12 == l22)
 			result = true;
 		return result;
 	}
@@ -197,5 +208,5 @@ public class Transaction {
 		System.out.println(" >");
 			
 	}
-	
+
 }
