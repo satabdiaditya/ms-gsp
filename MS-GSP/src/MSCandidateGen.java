@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 
 public class MSCandidateGen {	
@@ -21,7 +20,7 @@ public class MSCandidateGen {
 	 * @Param: L, the set of items' id obtained from init-pass
 	 * @return: 2-sequences candidate sequential pattern
 	 */
-	public FrequentSequence level2CandidateGen(LinkedList<Integer> L) {
+	public FrequentSequence level2CandidateGen(ArrayList<Integer> L) {
 		FrequentSequence C2 = new FrequentSequence();
 		//find the item who meets its MIS, then compare the following items with this item's MIS
 		for (int i=0; i < L.size(); i++) {	
@@ -40,8 +39,14 @@ public class MSCandidateGen {
 						if (Math.abs(MSGSP.SUP.get(L.get(i)).intValue() - MSGSP.SUP.get(L.get(j)).intValue()) <= MSGSP.SDC * MSGSP.itemN)
 						{
 							ItemSet is = new ItemSet();
-							is.items.add(L.get(i));
-							is.items.add(L.get(j));
+							if(L.get(i) <= L.get(j)) {
+								is.items.add(L.get(i));
+								is.items.add(L.get(j));
+							}
+							else {
+								is.items.add(L.get(j));
+								is.items.add(L.get(i));
+							}
 							if (! L.get(i).equals(L.get(j))) {
 								Transaction tran = new Transaction();
 								tran.itemSets.add(is);					
@@ -114,7 +119,7 @@ public class MSCandidateGen {
 				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 1, tr.getItems().size()-1) &&
 						MSGSP.MS.get(tran.getFirstItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
-						Math.abs(MSGSP.MS.get(tran.getItems().get(1)).doubleValue() - MSGSP.MS.get(tr.getLastItem()).doubleValue()) <= MSGSP.SDC);
+						Math.abs(MSGSP.SUP.get(tran.getItems().get(1)).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.itemN);
 				else
 					it.remove();
 			}
@@ -124,7 +129,7 @@ public class MSCandidateGen {
 				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-2) &&
 						MSGSP.MS.get(tran.getFirstItem()).doubleValue() > MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
-						Math.abs(MSGSP.MS.get(tran.getFirstItem()).doubleValue() - MSGSP.MS.get(tr.getItems().get(tr.getItems().size()-2)).doubleValue()) <= MSGSP.SDC);
+						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getItems().get(tr.getItems().size()-2)).intValue()) <= MSGSP.SDC*MSGSP.itemN);
 				else
 					it.remove();
 			}
@@ -133,7 +138,7 @@ public class MSCandidateGen {
 			for (Iterator<Transaction> it = pair.sequences.iterator(); it.hasNext();) {
 				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-1) &&
-						Math.abs(MSGSP.MS.get(tran.getFirstItem()).doubleValue() - MSGSP.MS.get(tr.getLastItem()).doubleValue()) <= MSGSP.SDC);
+						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.itemN);
 				else
 					it.remove();
 			}
