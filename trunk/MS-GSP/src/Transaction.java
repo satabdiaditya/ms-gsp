@@ -185,9 +185,9 @@ public class Transaction {
 		for(i=this.itemSets.size()-1;i>=0;i--){
 			ItemSet is=this.itemSets.get(i);
 			for(j=is.items.size()-1;j>=0;j--)
-				revIS.items.add(is.items.get(j));
+				revIS.items.add(new Integer(is.items.get(j).intValue()));
 			rev.itemSets.add(revIS);
-			revIS.items.clear();
+			revIS = new ItemSet();
 		}
 		return rev;
 	}
@@ -209,4 +209,18 @@ public class Transaction {
 			
 	}
 
+	public boolean equals(Object tr) {
+		Transaction trans = (Transaction) tr;
+		boolean result = false;
+		if (this.containedIn(trans) && this.itemSets.size() == trans.itemSets.size() && this.getItems().size() == trans.getItems().size())
+			result = true;
+		return result;
+	}
+	
+	public int hashCode() {
+		int result = 0;
+		for (Integer it : this.getItems())
+			result += it.intValue();
+		return result;
+	}
 }

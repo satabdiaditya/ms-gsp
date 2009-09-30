@@ -20,7 +20,7 @@ public class MSGSP {
 	/*
 	 * SDC is support distance constraint
 	 */
-	public static double SDC = 0.1;
+	public static double SDC = 0.7;
 	/*
 	 * SUP stores the support count for each item using a HashMap
 	 */
