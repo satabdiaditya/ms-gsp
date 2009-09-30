@@ -133,11 +133,6 @@ public class MSCandidateGen {
 						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getItems().get(tr.getItems().size()-2)).intValue()) <= MSGSP.SDC*MSGSP.N)
 					pair.sequences.add(tr);
 			}
-			System.out.println("===========join============");
-			tran.print();
-			System.out.println("---------------------------");
-			for(Transaction tr:pair.sequences)
-				tr.print();
 			break;
 		case 2:
 			for (Iterator<Transaction> it = F.sequences.iterator(); it.hasNext();) {
