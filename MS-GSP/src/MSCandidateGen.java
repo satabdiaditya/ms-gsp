@@ -37,7 +37,7 @@ public class MSCandidateGen {
 						 */
 						//TODO There maybe some problem with the following codes
 						//Whether the order within a sequence has been maintained??
-						if (Math.abs(MSGSP.SUP.get(L.get(i)).intValue() - MSGSP.SUP.get(L.get(j)).intValue()) <= MSGSP.SDC * MSGSP.itemN)
+						if (Math.abs(MSGSP.SUP.get(L.get(i)).intValue() - MSGSP.SUP.get(L.get(j)).intValue()) <= MSGSP.SDC * MSGSP.N)
 						{
 							ItemSet is = new ItemSet();
 							if(L.get(i) <= L.get(j)) {
@@ -120,7 +120,7 @@ public class MSCandidateGen {
 				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 1, tr.getItems().size()-1) &&
 						MSGSP.MS.get(tran.getFirstItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
-						Math.abs(MSGSP.SUP.get(tran.getItems().get(1)).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.itemN)
+						Math.abs(MSGSP.SUP.get(tran.getItems().get(1)).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.N)
 					pair.sequences.add(tr);
 			}
 			break;
@@ -129,7 +129,7 @@ public class MSCandidateGen {
 				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-2) &&
 						MSGSP.MS.get(tran.getFirstItem()).doubleValue() > MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
-						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getItems().get(tr.getItems().size()-2)).intValue()) <= MSGSP.SDC*MSGSP.itemN)
+						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getItems().get(tr.getItems().size()-2)).intValue()) <= MSGSP.SDC*MSGSP.N)
 					pair.sequences.add(tr);
 			}
 			break;
@@ -137,7 +137,7 @@ public class MSCandidateGen {
 			for (Iterator<Transaction> it = F.sequences.iterator(); it.hasNext();) {
 				Transaction tr = it.next();
 				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-1) &&
-						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.itemN)
+						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.N)
 					pair.sequences.add(tr);
 			}
 			break;
