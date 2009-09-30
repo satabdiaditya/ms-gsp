@@ -8,9 +8,10 @@ public class MSCandidateGen {
 		ArrayList<FrequentSequence> ss = partition(F);
 		for (int i=0; i<=2; i++) {
 			for (Transaction tran : ss.get(i).sequences) {
-				Transaction tr = tran.copy();
-				FrequentSequence pair = findPair(F, tr, i);
-				C.addFrequentSequence(joinSequences(tr, pair, i));
+				Transaction tr1 = tran.copy();
+				Transaction tr2 = tran.copy();
+				FrequentSequence pair = findPair(F, tr1, i);
+				C.addFrequentSequence(joinSequences(tr2, pair, i));
 			}
 		}
 		return prune(C,F); //F means F(k-1)?
@@ -127,11 +128,16 @@ public class MSCandidateGen {
 		case 1:
 			for (Iterator<Transaction> it = F.sequences.iterator(); it.hasNext();) {
 				Transaction tr = it.next();
-				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-2) &&
+				if (tran.specialEqualTo(tr, tran.getItems().size()-2, 0) &&
 						MSGSP.MS.get(tran.getFirstItem()).doubleValue() > MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
 						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getItems().get(tr.getItems().size()-2)).intValue()) <= MSGSP.SDC*MSGSP.N)
 					pair.sequences.add(tr);
 			}
+			System.out.println("===========join============");
+			tran.print();
+			System.out.println("---------------------------");
+			for(Transaction tr:pair.sequences)
+				tr.print();
 			break;
 		case 2:
 			for (Iterator<Transaction> it = F.sequences.iterator(); it.hasNext();) {
@@ -158,21 +164,22 @@ public class MSCandidateGen {
 		switch(i) {
 		case 0:
 			for (Transaction tr : pair.sequences) {
+				Transaction trans = tran.copy();
 				if (tr.itemSets.get(tr.itemSets.size()-1).items.size() == 1) {
 					candidate = new Transaction();
-					candidate.itemSets.addAll(tran.itemSets);
+					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.add(tr.itemSets.get(tr.itemSets.size()-1));
 					result.addTransaction(candidate);
-					if (tran.itemSets.size()==2 && tran.getItems().size()==2 && MSGSP.MS.get(tran.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem())) {
+					if (trans.itemSets.size()==2 && trans.getItems().size()==2 && MSGSP.MS.get(trans.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem())) {
 						candidate = new Transaction();
-						candidate.itemSets.addAll(tran.itemSets);
+						candidate.itemSets.addAll(trans.itemSets);
 						candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.getLastItem());
 						result.addTransaction(candidate);
 					}
 				}
-				else if (tran.getItems().size() > 2 ||(tran.itemSets.size()==1 && tran.getItems().size()==2 && MSGSP.MS.get(tran.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()))) {
+				else if (trans.getItems().size() > 2 ||(trans.itemSets.size()==1 && trans.getItems().size()==2 && MSGSP.MS.get(trans.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()))) {
 					candidate = new Transaction();
-					candidate.itemSets.addAll(tran.itemSets);
+					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.getLastItem());
 					result.addTransaction(candidate);
 				}
@@ -180,21 +187,22 @@ public class MSCandidateGen {
 			break;
 		case 1:
 			for (Transaction tr : pair.sequences) {
+				Transaction trans = tran.copy();
 				if (tr.reverse().itemSets.get(tr.reverse().itemSets.size()-1).items.size() == 1) {
 					candidate = new Transaction();
-					candidate.itemSets.addAll(tran.reverse().itemSets);
+					candidate.itemSets.addAll(trans.reverse().itemSets);
 					candidate.itemSets.add(tr.reverse().itemSets.get(tr.reverse().itemSets.size()-1));
 					result.addTransaction(candidate.reverse());
-					if (tran.reverse().itemSets.size()==2 && tran.reverse().getItems().size()==2 && MSGSP.MS.get(tran.reverse().getLastItem()).doubleValue() < MSGSP.MS.get(tr.reverse().getLastItem())) {
+					if (trans.reverse().itemSets.size()==2 && trans.reverse().getItems().size()==2 && MSGSP.MS.get(trans.reverse().getLastItem()).doubleValue() < MSGSP.MS.get(tr.reverse().getLastItem())) {
 						candidate = new Transaction();
-						candidate.itemSets.addAll(tran.reverse().itemSets);
+						candidate.itemSets.addAll(trans.reverse().itemSets);
 						candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.reverse().getLastItem());
 						result.addTransaction(candidate.reverse());
 					}
 				}
-				else if (tran.reverse().getItems().size() > 2 ||(tran.reverse().itemSets.size()==1 && tran.reverse().getItems().size()==2 && MSGSP.MS.get(tran.reverse().getLastItem()).doubleValue() < MSGSP.MS.get(tr.reverse().getLastItem()))) {
+				else if (trans.reverse().getItems().size() > 2 ||(trans.reverse().itemSets.size()==1 && trans.reverse().getItems().size()==2 && MSGSP.MS.get(trans.reverse().getLastItem()).doubleValue() < MSGSP.MS.get(tr.reverse().getLastItem()))) {
 					candidate = new Transaction();
-					candidate.itemSets.addAll(tran.reverse().itemSets);
+					candidate.itemSets.addAll(trans.reverse().itemSets);
 					candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.reverse().getLastItem());
 					result.addTransaction(candidate.reverse());
 				}
@@ -202,15 +210,16 @@ public class MSCandidateGen {
 			break;
 		case 2:
 			for (Transaction tr : pair.sequences) {
+				Transaction trans = tran.copy();
 				if (tr.itemSets.get(tr.itemSets.size()-1).items.size() == 1) {
 					candidate = new Transaction();
-					candidate.itemSets.addAll(tran.itemSets);
+					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.add(tr.itemSets.get(tr.itemSets.size()-1));
 					result.addTransaction(candidate);
 				}
 				else {
 					candidate = new Transaction();
-					candidate.itemSets.addAll(tran.itemSets);
+					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.getLastItem());
 					result.addTransaction(candidate);
 				}
