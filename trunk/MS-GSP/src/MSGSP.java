@@ -18,13 +18,9 @@ public class MSGSP {
 	 */
 	public static int N;
 	/*
-	 * Count of total item sets
-	 */
-	public static int itemN;
-	/*
 	 * SDC is support distance constraint
 	 */
-	public static double SDC = 1;
+	public static double SDC = 0.1;
 	/*
 	 * SUP stores the support count for each item using a HashMap
 	 */
@@ -137,7 +133,6 @@ public class MSGSP {
 		
 		for (Transaction tran : S) {
 			N++;
-			itemN += tran.itemSets.size();
 			HashSet<Integer> items = tran.getItemsAsSet();	//get all the items contained in current transaction
 			for (Integer id : items) {	//add 1 to the support count for each item
 				Integer count = SUP.get(id);
