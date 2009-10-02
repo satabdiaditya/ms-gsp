@@ -197,7 +197,7 @@ public class Transaction {
 	 */
 	public void print(){
 		int i;
-		System.out.print("		< "); // two tabs as indent
+		System.out.print("		<"); // two tabs as indent
 		for(ItemSet is: itemSets){
 			System.out.print("{");
 			for(i=0;i<is.items.size()-1;i++){  // print an element except the last item
@@ -205,7 +205,7 @@ public class Transaction {
 			}
 			System.out.print(is.items.get(i)+"}"); //print the last item in an element
 		}
-		System.out.println(" >");
+		System.out.println(">");
 			
 	}
 
