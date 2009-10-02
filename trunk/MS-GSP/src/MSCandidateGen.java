@@ -1,17 +1,19 @@
 import java.util.ArrayList;
-import java.util.Iterator;
 
 
 public class MSCandidateGen {	
 	public FrequentSequence candidateGen(FrequentSequence F) {
 		FrequentSequence C = new FrequentSequence();
-		ArrayList<FrequentSequence> ss = partition(F);
-		for (int i=0; i<=2; i++) {
-			for (Transaction tran : ss.get(i).sequences) {
-				Transaction tr1 = tran.copy();
-				Transaction tr2 = tran.copy();
-				FrequentSequence pair = findPair(F, tr1, i);
-				C.addFrequentSequence(joinSequences(tr2, pair, i));
+		for (Transaction tr1 : F.sequences){
+			for (Transaction tr2 : F.sequences) {
+				Transaction s1 = tr1.copy();
+				Transaction s2 = tr2.copy();
+				int condition = checkCondition(s1, s2);
+				if (condition != 0) {
+					Transaction candidate = joinSequences(s1, s2, condition);
+					if (candidate.hashCode() != 0)
+						C.addTransaction(candidate);
+				}
 			}
 		}
 		return prune(C,F); //F means F(k-1)?
@@ -81,30 +83,33 @@ public class MSCandidateGen {
 	}
 	
 	/*
+	 * 
+	 */
+	private int checkCondition(Transaction s1, Transaction s2) {
+		int result = 0;
+		int i = partition(s1);
+		if(testPair(s1, s2, i))
+			result = i;
+		else if(testPair(s1, s2, 3))
+			result = 3;
+		return result;
+	}
+	/*
 	 * This method partitions the k-1 length frequent sequence F into three
 	 * subset s1, s2, and s3.
 	 * s1 is those whose first item has the minimum MIS.
 	 * s2 is those whose last item has the minimum MIS.
 	 * s3 is the rest.
 	 */
-	private ArrayList<FrequentSequence> partition(FrequentSequence F) {
-		ArrayList<FrequentSequence> ss = new ArrayList<FrequentSequence>();
-		FrequentSequence s1 = new FrequentSequence();
-		FrequentSequence s2 = new FrequentSequence();
-		FrequentSequence s3 = new FrequentSequence();
-		for (Transaction tran : F.sequences) {
+	private int partition(Transaction tran) {
+		int result = 0;
 			Integer firstItem = tran.getFirstItem();
 			Integer lastItem = tran.getLastItem();
 			if (tran.isSmallest(firstItem, 0))
-				s1.addTransaction(tran);
+				result = 1;
 			else if (tran.isSmallest(lastItem, 1))
-				s2.addTransaction(tran);
-			else s3.addTransaction(tran);
-		}
-		ss.add(s1);
-		ss.add(s2);
-		ss.add(s3);
-		return ss;
+				result = 2;
+		return result;
 	}
 	
 	/*
@@ -113,37 +118,28 @@ public class MSCandidateGen {
 	 * a pair for.
 	 * Parameter i indicates which of the three, s1, s2, and s3, does tran belong to. 
 	 */
-	private FrequentSequence findPair(FrequentSequence F, Transaction tran, int i) {
-		FrequentSequence pair = new FrequentSequence();
+	private boolean testPair(Transaction tran, Transaction tr, int i) {
+		boolean result = false;
 		switch (i) {
-		case 0:
-			for (Iterator<Transaction> it = F.sequences.iterator(); it.hasNext();) {
-				Transaction tr = it.next();
-				if (tran.specialEqualTo(tr, 1, tr.getItems().size()-1) &&
-						MSGSP.MS.get(tran.getFirstItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
-						Math.abs(MSGSP.SUP.get(tran.getItems().get(1)).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.N)
-					pair.sequences.add(tr);
-			}
-			break;
 		case 1:
-			for (Iterator<Transaction> it = F.sequences.iterator(); it.hasNext();) {
-				Transaction tr = it.next();
-				if (tran.specialEqualTo(tr, tran.getItems().size()-2, 0) &&
-						MSGSP.MS.get(tran.getFirstItem()).doubleValue() > MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
-						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getItems().get(tr.getItems().size()-2)).intValue()) <= MSGSP.SDC*MSGSP.N)
-					pair.sequences.add(tr);
-			}
+			if (tran.specialEqualTo(tr, 1, tr.getItems().size()-1) &&
+					MSGSP.MS.get(tran.getFirstItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()).doubleValue() &&
+					Math.abs(MSGSP.SUP.get(tran.getItems().get(1)).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.N)
+				result = true;
 			break;
 		case 2:
-			for (Iterator<Transaction> it = F.sequences.iterator(); it.hasNext();) {
-				Transaction tr = it.next();
-				if (tran.specialEqualTo(tr, 0, tr.getItems().size()-1) &&
-						Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.N)
-					pair.sequences.add(tr);
-			}
+			if (tran.specialEqualTo(tr, tran.getItems().size()-2, 0) &&
+					MSGSP.MS.get(tr.getFirstItem()).doubleValue() > MSGSP.MS.get(tran.getLastItem()).doubleValue() &&
+					Math.abs(MSGSP.SUP.get(tran.getItems().get(tran.getItems().size()-2)).intValue() - MSGSP.SUP.get(tr.getFirstItem()).intValue()) <= MSGSP.SDC*MSGSP.N)
+				result = true;
+			break;
+		case 3:
+			if (tran.specialEqualTo(tr, 0, tr.getItems().size()-1) &&
+					Math.abs(MSGSP.SUP.get(tran.getFirstItem()).intValue() - MSGSP.SUP.get(tr.getLastItem()).intValue()) <= MSGSP.SDC*MSGSP.N)
+				result = true;
 			break;
 		}
-		return pair;
+		return result;
 	}
 	
 	/*
@@ -153,75 +149,70 @@ public class MSCandidateGen {
 	 * going to join their pairs.
 	 * Parameter fs is s1, s2, or s3.
 	 */
-	private FrequentSequence joinSequences(Transaction tran, FrequentSequence pair, int i) {
-		FrequentSequence result = new FrequentSequence();
+	private Transaction joinSequences(Transaction tran, Transaction tr, int i) {
 		Transaction candidate = new Transaction();
 		switch(i) {
-		case 0:
-			for (Transaction tr : pair.sequences) {
+		case 1:
 				Transaction trans = tran.copy();
 				if (tr.itemSets.get(tr.itemSets.size()-1).items.size() == 1) {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.add(tr.itemSets.get(tr.itemSets.size()-1));
-					result.addTransaction(candidate);
 					if (trans.itemSets.size()==2 && trans.getItems().size()==2 && MSGSP.MS.get(trans.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem())) {
 						candidate = new Transaction();
 						candidate.itemSets.addAll(trans.itemSets);
 						candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.getLastItem());
-						result.addTransaction(candidate);
+						
 					}
 				}
 				else if (trans.getItems().size() > 2 ||(trans.itemSets.size()==1 && trans.getItems().size()==2 && MSGSP.MS.get(trans.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()))) {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.getLastItem());
-					result.addTransaction(candidate);
+					
 				}
-			}
+			
 			break;
-		case 1:
-			for (Transaction tr : pair.sequences) {
-				Transaction trans = tran.copy();
+		case 2:
+				trans = tran.copy();
 				if (tr.reverse().itemSets.get(tr.reverse().itemSets.size()-1).items.size() == 1) {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.reverse().itemSets);
 					candidate.itemSets.add(tr.reverse().itemSets.get(tr.reverse().itemSets.size()-1));
-					result.addTransaction(candidate.reverse());
+					
 					if (trans.reverse().itemSets.size()==2 && trans.reverse().getItems().size()==2 && MSGSP.MS.get(trans.reverse().getLastItem()).doubleValue() < MSGSP.MS.get(tr.reverse().getLastItem())) {
 						candidate = new Transaction();
 						candidate.itemSets.addAll(trans.reverse().itemSets);
 						candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.reverse().getLastItem());
-						result.addTransaction(candidate.reverse());
+						
 					}
 				}
 				else if (trans.reverse().getItems().size() > 2 ||(trans.reverse().itemSets.size()==1 && trans.reverse().getItems().size()==2 && MSGSP.MS.get(trans.reverse().getLastItem()).doubleValue() < MSGSP.MS.get(tr.reverse().getLastItem()))) {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.reverse().itemSets);
 					candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.reverse().getLastItem());
-					result.addTransaction(candidate.reverse());
+					
 				}
-			}
+				candidate = candidate.reverse();
 			break;
-		case 2:
-			for (Transaction tr : pair.sequences) {
-				Transaction trans = tran.copy();
+		case 3:
+				trans = tran.copy();
 				if (tr.itemSets.get(tr.itemSets.size()-1).items.size() == 1) {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.add(tr.itemSets.get(tr.itemSets.size()-1));
-					result.addTransaction(candidate);
+					
 				}
 				else {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.getLastItem());
-					result.addTransaction(candidate);
+					
 				}
-			}
+			
 			break;
 		}
-		return result;
+		return candidate;
 	}
 	
 	/*

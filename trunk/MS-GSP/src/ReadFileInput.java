@@ -19,13 +19,19 @@ public class ReadFileInput {
 		HashMap<Integer,Float> mis=new HashMap<Integer,Float>();
 		try{
 			Scanner f=new Scanner(new File(filename));
-			while(f.hasNextLine()){
+			while(true){
 				String record=f.nextLine(); //read each line in parameter-file.txt
-				// extract the itemID
-				Integer itemID=Integer.valueOf(record.substring(record.indexOf('(')+1, record.indexOf(')')));
-				// extract the minimum item support
-				Float itemMIS=Float.valueOf(record.substring(record.indexOf('=')+2)); // There must be a space after '=' to make this line work
-				mis.put(itemID,itemMIS);
+				if(f.hasNextLine()){
+					// extract the itemID
+					Integer itemID=Integer.valueOf(record.substring(record.indexOf('(')+1, record.indexOf(')')));
+					// extract the minimum item support
+					Float itemMIS=Float.valueOf(record.substring(record.indexOf('=')+2)); // There must be a space after '=' to make this line work
+					mis.put(itemID,itemMIS);
+				}else{ // last line, read SDC
+					MSGSP.SDC=Float.valueOf(record.substring(record.indexOf('=')+2));
+					break;
+				}
+				
 			}
 			return mis;
 		}catch(IOException e){
