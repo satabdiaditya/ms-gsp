@@ -20,7 +20,7 @@ public class MSGSP {
 	/*
 	 * SDC is support distance constraint
 	 */
-	public static double SDC = 0.7;
+	public static double SDC;
 	/*
 	 * SUP stores the support count for each item using a HashMap
 	 */
@@ -67,12 +67,6 @@ public class MSGSP {
 		
 		
 		F.add(initPrune(L));	//obtain F1 from L
-		System.out.println("F1 is ");
-		for (Transaction t : F.get(1).sequences) { 
-			for (ItemSet is : t.itemSets)
-				System.out.print(is.items);
-			System.out.println();
-		}
 		
 		MSCandidateGen gen = new MSCandidateGen(); // Define a new instance of MSCandidateGen class
 		FrequentSequence Fk_1;
@@ -90,27 +84,27 @@ public class MSGSP {
 		    	}
 		    
 		    FrequentSequence Fk=new FrequentSequence();
+
 		    for(Transaction c: Ck.sequences) {
 		    	if(c.count*1.0/N>=MS.get(c.getItems().get(c.minMISItem())))
 		    		Fk.sequences.add(c);
 		    }
 		    F.add(Fk);
-		    System.out.println("F" +k+" is ");
-			for (Transaction t : Fk.sequences) { 
-				for (ItemSet is : t.itemSets)
-					System.out.print(is.items);
-				System.out.println();
-			}
 		}
+		F.remove(F.size()-1);
 		
 		
 		// Print F
 		int k=0;
 		while(++k<F.size()){
 			FrequentSequence Fk=F.get(k);
-			System.out.println("***************K="+k+"********************");
+			System.out.println(k+"-Sequence");
+			System.out.println();
 			for(Transaction tran: Fk.sequences) 
 				tran.print();
+			System.out.println();
+			System.out.println("The total number of "+k+"-Sequence = "+Fk.sequences.size());
+			System.out.println();
 		}
 
 		
