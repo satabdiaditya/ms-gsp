@@ -46,7 +46,6 @@ public class MSCandidateGen {
 						 * frequent sequence, we need to add two sequences <{a}, {b}> and 
 						 * <{a, b}>
 						 */
-						//TODO There maybe some problem with the following codes
 						//Whether the order within a sequence has been maintained??
 						if (Math.abs(MSGSP.SUP.get(L.get(i)).intValue() - MSGSP.SUP.get(L.get(j)).intValue()) <= MSGSP.SDC * MSGSP.N)
 						{
@@ -228,7 +227,6 @@ public class MSCandidateGen {
 	 * The prune step in MScandidate-gen-SPM function
 	 */
 	private FrequentSequence prune(FrequentSequence fs, FrequentSequence fk_1) {
-		//TODO
 		Integer minItem; // Item that has the minimum MIS in a sequence
 		FrequentSequence fsPruned=new FrequentSequence(); // Frequent sequence set after prune step
 		for(Transaction t: fs.sequences){
