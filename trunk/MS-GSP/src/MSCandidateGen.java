@@ -8,14 +8,6 @@ public class MSCandidateGen {
 			for (Transaction tr2 : F.sequences) {
 				Transaction s1 = tr1.copy();
 				Transaction s2 = tr2.copy();
-				if (s1.hashCode() == 110 && s2.hashCode() == 80) {
-					s1.print();
-					s2.print();
-					System.out.println(partition(s1));
-					System.out.println(testPair(s1, s2, 2));
-					System.out.println(checkCondition(s1, s2));
-					System.out.println(Math.abs(MSGSP.SUP.get(s1.getItems().get(s1.getItems().size()-2)).intValue() - MSGSP.SUP.get(s2.getFirstItem()).intValue()) <= MSGSP.SDC*MSGSP.N);
-				}
 				int condition = checkCondition(s1, s2);
 				if (condition != 0) {
 					Transaction candidate = joinSequences(s1, s2, condition);

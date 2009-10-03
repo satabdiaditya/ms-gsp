@@ -193,7 +193,7 @@ public class MSGSP {
 	//public void sort(HashMap)
 	
 	public static void main(String[] args) {
-		new MSGSP("parameter-file.txt","data.txt").main();		
+		new MSGSP("parameter-file.txt","data1.txt").main();		
 	}
 
 }
