@@ -24,8 +24,6 @@ public class MSCandidateGen {
 				}
 			}
 		}
-		for (Transaction tr : C.sequences)
-			tr.print();
 		return prune(C,F); //F means F(k-1)?
 	}
 	
