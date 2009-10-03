@@ -1,4 +1,6 @@
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,9 +50,10 @@ public class ReadFileInput {
 	public static ArrayList<Transaction> readData(String filename){
 		ArrayList<Transaction> trans=new ArrayList<Transaction>();
 		try{
-			Scanner f=new Scanner(new File(filename));
-			while(f.hasNextLine()){
-				String record=f.nextLine(); // read each line in data file
+			File file = new File(filename);
+			BufferedReader f=new BufferedReader(new FileReader(file));
+			String record=f.readLine();
+			while(record != null){
 				Transaction transaction=new Transaction(); // create a new transaction 
 				//index for next open parenthesis in current line
 				int idxOpenParen=record.indexOf('{'); 
@@ -83,6 +86,7 @@ public class ReadFileInput {
 				}
 				
 				trans.add(transaction);  // add an transaction to the database
+				record=f.readLine();
 			}
 			return trans;
 		}catch(IOException e){

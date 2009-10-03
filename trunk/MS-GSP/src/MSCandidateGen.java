@@ -10,9 +10,7 @@ public class MSCandidateGen {
 				Transaction s2 = tr2.copy();
 				int condition = checkCondition(s1, s2);
 				if (condition != 0) {
-					Transaction candidate = joinSequences(s1, s2, condition);
-					if (candidate.hashCode() != 0)
-						C.addTransaction(candidate);
+					C.addFrequentSequence(joinSequences(s1, s2, condition));
 				}
 			}
 		}
@@ -149,7 +147,8 @@ public class MSCandidateGen {
 	 * going to join their pairs.
 	 * Parameter fs is s1, s2, or s3.
 	 */
-	private Transaction joinSequences(Transaction tran, Transaction tr, int i) {
+	private FrequentSequence joinSequences(Transaction tran, Transaction tr, int i) {
+		FrequentSequence fs = new FrequentSequence();
 		Transaction candidate = new Transaction();
 		switch(i) {
 		case 1:
@@ -158,18 +157,19 @@ public class MSCandidateGen {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.add(tr.itemSets.get(tr.itemSets.size()-1));
-					if (trans.itemSets.size()==2 && trans.getItems().size()==2 && MSGSP.MS.get(trans.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem())) {
+					fs.addTransaction(candidate);
+					if (trans.itemSets.size()==2 && trans.getItems().size()==2 && trans.getLastItem().toString().compareTo(tr.getLastItem().toString()) < 0) {
 						candidate = new Transaction();
 						candidate.itemSets.addAll(trans.itemSets);
 						candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.getLastItem());
-						
+						fs.addTransaction(candidate);
 					}
 				}
-				else if (trans.getItems().size() > 2 ||(trans.itemSets.size()==1 && trans.getItems().size()==2 && MSGSP.MS.get(trans.getLastItem()).doubleValue() < MSGSP.MS.get(tr.getLastItem()))) {
+				else if (trans.getItems().size() > 2 ||(trans.itemSets.size()==1 && trans.getItems().size()==2 && trans.getLastItem().toString().compareTo(tr.getLastItem().toString()) < 0)) {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.getLastItem());
-					
+					fs.addTransaction(candidate);
 				}
 			
 			break;
@@ -179,21 +179,20 @@ public class MSCandidateGen {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.reverse().itemSets);
 					candidate.itemSets.add(tr.reverse().itemSets.get(tr.reverse().itemSets.size()-1));
-					
-					if (trans.reverse().itemSets.size()==2 && trans.reverse().getItems().size()==2 && MSGSP.MS.get(trans.reverse().getLastItem()).doubleValue() < MSGSP.MS.get(tr.reverse().getLastItem())) {
+					fs.addTransaction(candidate.reverse());
+					if (trans.reverse().itemSets.size()==2 && trans.reverse().getItems().size()==2 && trans.reverse().getLastItem().toString().compareTo(tr.reverse().getLastItem().toString()) < 0) {
 						candidate = new Transaction();
 						candidate.itemSets.addAll(trans.reverse().itemSets);
 						candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.reverse().getLastItem());
-						
+						fs.addTransaction(candidate.reverse());
 					}
 				}
-				else if (trans.reverse().getItems().size() > 2 ||(trans.reverse().itemSets.size()==1 && trans.reverse().getItems().size()==2 && MSGSP.MS.get(trans.reverse().getLastItem()).doubleValue() < MSGSP.MS.get(tr.reverse().getLastItem()))) {
+				else if (trans.reverse().getItems().size() > 2 ||(trans.reverse().itemSets.size()==1 && trans.reverse().getItems().size()==2 && trans.reverse().getLastItem().toString().compareTo(tr.reverse().getLastItem().toString()) < 0)) {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.reverse().itemSets);
 					candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.reverse().getLastItem());
-					
+					fs.addTransaction(candidate.reverse());
 				}
-				candidate = candidate.reverse();
 			break;
 		case 3:
 				trans = tran.copy();
@@ -201,18 +200,18 @@ public class MSCandidateGen {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.add(tr.itemSets.get(tr.itemSets.size()-1));
-					
+					fs.addTransaction(candidate);
 				}
 				else {
 					candidate = new Transaction();
 					candidate.itemSets.addAll(trans.itemSets);
 					candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.getLastItem());
-					
+					fs.addTransaction(candidate);
 				}
 			
 			break;
 		}
-		return candidate;
+		return fs;
 	}
 	
 	/*
