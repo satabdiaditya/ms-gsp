@@ -67,11 +67,11 @@ public class ReadFileInput {
 					int idxNumEnd=min(idxClosedParen,idxComma);
 										
 					while(idxNumEnd<=idxClosedParen){
-						is.items.add(Integer.valueOf(record.substring(idxNumStart,idxNumEnd))); // add an item to the itemset
+						is.items.add(Integer.valueOf(record.substring(idxNumStart,idxNumEnd).trim())); // add an item to the itemset
 						if(idxNumEnd==idxClosedParen) //reach the end of the itemset
 							break;
 						// locate beginning and ending positions for next item in the current itemset
-						idxNumStart=idxComma+2;
+						idxNumStart=idxComma+1;
 						idxComma=record.indexOf(',',idxNumStart); 
 						idxNumEnd=min(idxClosedParen,idxComma);
 					}
