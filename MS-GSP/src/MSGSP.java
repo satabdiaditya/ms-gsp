@@ -86,7 +86,7 @@ public class MSGSP {
 		    FrequentSequence Fk=new FrequentSequence();
 
 		    for(Transaction c: Ck.sequences) {
-		    	if(c.count*1.0/N>=MS.get(c.getItems().get(c.minMISItem())))
+		    	if(c.count>=MS.get(c.getItems().get(c.minMISItem()))*N)
 		    		Fk.sequences.add(c);
 		    }
 		    F.add(Fk);
@@ -133,7 +133,7 @@ public class MSGSP {
 				SUP.put(id, new Integer(count.intValue() + 1));
 			}
 		}
-		
+		System.out.println("10: " + SUP.get(new Integer(10)) + " 40: " + SUP.get(new Integer(40)) + " 70: " + SUP.get(new Integer(70)) + " N: " + N);
 		Integer minId = null;	//used to store the id of the first item who meets its MIS
 		while (it.hasNext()) {	//find the first item who meets its MIS
 			Integer itemId = it.next();
