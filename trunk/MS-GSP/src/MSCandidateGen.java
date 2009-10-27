@@ -160,8 +160,8 @@ public class MSCandidateGen {
 					fs.addTransaction(candidate);
 					if (trans.itemSets.size()==2 && trans.getItems().size()==2 && trans.getLastItem().toString().compareTo(tr.getLastItem().toString()) < 0) {
 						candidate = new Transaction();
-						candidate.itemSets.addAll(trans.itemSets);
-						candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.getLastItem());
+						candidate.itemSets.addAll(trans.copy().itemSets);
+						candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.copy().getLastItem());
 						fs.addTransaction(candidate);
 					}
 				}
@@ -182,8 +182,8 @@ public class MSCandidateGen {
 					fs.addTransaction(candidate.reverse());
 					if (trans.reverse().itemSets.size()==2 && trans.reverse().getItems().size()==2 && trans.reverse().getLastItem().toString().compareTo(tr.reverse().getLastItem().toString()) < 0) {
 						candidate = new Transaction();
-						candidate.itemSets.addAll(trans.reverse().itemSets);
-						candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.reverse().getLastItem());
+						candidate.itemSets.addAll(trans.copy().reverse().itemSets);
+						candidate.itemSets.get(candidate.itemSets.size()-1).items.add(tr.copy().reverse().getLastItem());
 						fs.addTransaction(candidate.reverse());
 					}
 				}
